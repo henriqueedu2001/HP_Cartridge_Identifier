@@ -22,6 +22,9 @@ def classify_test():
     # extração do texto de cada imagem
     for img in imgs: img.extract_text()
     
+    # extração do tipo de cartucho de cada imagem
+    for img in imgs: img.extract_cartidge_type()
+    
     # texto de cada imagem
     for img in imgs: img.resume()
     

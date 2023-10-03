@@ -2,6 +2,7 @@ import cv2
 import pytesseract
 import PIL
 import os
+import re
 
 # configuração do PIL para OCR
 PIL_CONFIG = r"--psm 6 --oem 3"
@@ -17,6 +18,12 @@ class CartridgeImage:
         self.img_id = get_file_name(img_path)
         self.img = get_img(img_path)
         self.img_txt = ''
+        self.cartidge_type = ''
+        
+        
+    def extract_cartidge_type(self):
+        cartidge_type = Classifier.get_cartidge_type(self.img_txt)
+        self.cartidge_type = cartidge_type
         
         
     def extract_text(self):
@@ -32,10 +39,83 @@ class CartridgeImage:
         print(
             'id:', self.img_id,
             '\npath:', self.img_path,
-            '\ntext:', self.img_txt,
+            '\ntype:', self.cartidge_type,
             '\n'
             )
     
+    
+class Classifier:
+    def get_cartidge_type(label_txt):
+        """Obtém o tipo do cartucho, a partir de texto do rótulo
+
+        Args:
+            label_txt (str): texto do rótulo do cartucho
+
+        Returns:
+            cartridge_type (str): tipo do cartucho
+        """
+        cartridge_type = ''
+        
+        if Classifier.is_type_664(label_txt):
+            cartridge_type = '664'
+        elif Classifier.is_type_667(label_txt):
+            cartridge_type = '667'
+        elif Classifier.is_type_57(label_txt):
+            cartridge_type = '57'
+        
+        return cartridge_type
+    
+    
+    def is_type_664(label_txt):
+        """Verifica se cartucho é do tipo 664
+
+        Args:
+            label_txt (str): texto do rótulo do cartucho
+
+        Returns:
+            bool: veredito; verdadeiro, se o cartucho é desse tipo, e falso, caso contrário
+        """
+        match_label = re.search('664', label_txt)
+        
+        if match_label:
+            return True
+
+        return False
+    
+    
+    def is_type_667(label_txt):
+        """Verifica se cartucho é do tipo 667
+
+        Args:
+            label_txt (str): texto do rótulo do cartucho
+
+        Returns:
+            bool: veredito; verdadeiro, se o cartucho é desse tipo, e falso, caso contrário
+        """
+        match_label = re.search('667', label_txt)
+        
+        if match_label:
+            return True
+
+        return False
+        
+        
+    def is_type_57(label_txt):
+        """Verifica se cartucho é do tipo 57
+
+        Args:
+            label_txt (str): texto do rótulo do cartucho
+
+        Returns:
+            bool: veredito; verdadeiro, se o cartucho é desse tipo, e falso, caso contrário
+        """
+        match_label = re.search('57', label_txt)
+        
+        if match_label:
+            return True
+
+        return False
+
 
 def get_text(img):
     """_summary_
